@@ -1,0 +1,8 @@
+<div class="well">
+  <h2>Enter a zipcode:</h2>
+  <input class="form-control" placeholder="Zipcode" type="text" id="addLocation" ngModel #locationControl="ngModel">
+  <br>
+  <button class="btn btn-primary" id="addLocationBtn" (click)="zipcodeSelected.emit(locationControl.value)">
+    Add location
+  </button>
+</div>

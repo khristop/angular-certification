@@ -1,0 +1,25 @@
+<div class="well flex">
+  <div>
+    <h3>{{ weatherInfo.name }} ({{ weatherInfo.zipcode }})</h3>
+    <h4>Current conditions: {{ weatherInfo.weather[0].main }}</h4>
+    <h4>Temperatures today:</h4>
+    <p>
+      Current {{ weatherInfo.main.temp | measureUnit : measureUnit }}
+      - Max {{ weatherInfo.main.temp_max | measureUnit : measureUnit}}
+      - Min {{ weatherInfo.main.temp_min | measureUnit : measureUnit }}
+    </p>
+    <p>
+      <a [routerLink]="['/forecast', weatherInfo.zipcode]">Show 5-day forecast for Rancho Cordova</a>
+    </p>
+  </div>
+  <div>
+    <span class="close" (click)="removeLocation.emit(weatherInfo)">×</span>
+
+    <ng-container [ngSwitch]="weatherInfo.weather[0].main ">
+      <img *ngSwitchCase="'Clouds'" src="https://www.angulartraining.com/images/weather/clouds.png">
+      <img *ngSwitchCase="'Clear'" src="https://www.angulartraining.com/images/weather/sun.png">
+      <img *ngSwitchCase="'Rain'" src="https://www.angulartraining.com/images/weather/rain.png">
+      <img *ngSwitchCase="'Snow'"  src="https://www.angulartraining.com/images/weather/snow.png">
+    </ng-container>
+  </div>
+</div>

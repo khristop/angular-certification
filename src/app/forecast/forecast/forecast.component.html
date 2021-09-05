@@ -1,0 +1,24 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">{{forecastData.cnt}}-day forecast for {{forecastData.city.name}}</h3>
+
+  </div>
+  <ul class="list-group">
+    <!---->
+    <li class="list-group-item" *ngFor="let forecast of forecastData.list">
+      {{forecast.dt | getDate | date : 'EEEE, MMMM d'}}:
+      {{forecast.weather[0].main}}
+      - Min: {{forecast.temp.min | measureUnit : measurmentUnit}}
+      - Max: {{forecast.temp.max | measureUnit : measurmentUnit}}
+
+      <ng-container [ngSwitch]="forecast.weather[0].main">
+        <img class="icon" *ngSwitchCase="'Clouds'" src="https://www.angulartraining.com/images/weather/clouds.png">
+        <img class="icon"  *ngSwitchCase="'Clear'" src="https://www.angulartraining.com/images/weather/sun.png">
+        <img class="icon"  *ngSwitchCase="'Rain'" src="https://www.angulartraining.com/images/weather/rain.png">
+        <img class="icon"  *ngSwitchCase="'Snow'"  src="https://www.angulartraining.com/images/weather/snow.png">
+      </ng-container>
+    </li>
+  </ul>
+</div>
+
+<button class="btn btn-success" tabindex="0" id="mainPageBtn" (click)="router.navigate(['/'])">&lt; Back to main page</button>
