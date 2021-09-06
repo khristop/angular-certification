@@ -1,0 +1,38 @@
+.button {
+  padding: 0 12px;
+  border-radius: 4px;
+  width: 100%;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  &--initial {
+    background-color: #337AB7;
+    color: white;
+    border-color: #2e6da4;
+    &:hover {
+        color: #fff;
+        background-color: #286090;
+        border-color: #204d74;
+    }
+  }
+  &--working {
+    background-color: yellow;
+    color: white;
+  
+    img {
+      object-fit: cover;
+      height: 100%;
+    }
+  }
+  &--complete {
+    background-color: green;
+    color: white;
+    img {
+      object-fit: cover;
+      height: 50%;
+      padding-right: 8px;
+    }
+  }
+}
+
+

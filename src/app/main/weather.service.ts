@@ -19,6 +19,8 @@ export class WeatherService implements OnDestroy {
   }
   locationWeathers$ = this.locationWeathersSubject$.asObservable();
 
+  addLocationStatus$ = new BehaviorSubject<boolean>(false);
+
   constructor(
     private storage: StorageService,
     private weatherAPIService: WeatherAPIService
@@ -71,8 +73,11 @@ export class WeatherService implements OnDestroy {
     return locationsSaved ? JSON.parse(locationsSaved) : [];
   }
 
+  
   addLocation(newLocationZipcode: string): void {
-    if (this.zipcodes.includes(newLocationZipcode)) {
+    this.addLocationStatus$.next(true);
+    if (!newLocationZipcode || this.zipcodes.includes(newLocationZipcode)) {
+      this.addLocationStatus$.next(false);
       return; // return some error or display zipcode already selected
     }
     this.weatherAPIService
@@ -84,6 +89,7 @@ export class WeatherService implements OnDestroy {
           weatherData as Weather
         ]);
         this.saveLocations([...this.zipcodes, newLocationZipcode]);
+        this.addLocationStatus$.next(false);
       });
   }
 

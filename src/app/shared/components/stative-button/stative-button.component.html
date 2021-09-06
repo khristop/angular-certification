@@ -1,6 +1,6 @@
 
-<ng-container *ngIf="currentState$ | async as currentState">
-  <button>
+<ng-container *ngIf="(currentState$ | async) as currentState">
+  <button class="button--wrapper" (click)="proccess($event)" [disabled]="currentState === 'working'">
     <ng-container *ngTemplateOutlet="stateTemplates[currentState] || defaultState">
     </ng-container>
     <ng-template #defaultState>

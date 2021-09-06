@@ -12,6 +12,6 @@ const directives = [ButtonStateDirective];
 @NgModule({
   imports: [CommonModule],
   declarations: [...pipes, ...components, ...directives],
-  exports: [...pipes]
+  exports: [...pipes, ...components, ...directives]
 })
 export class SharedModule {}
