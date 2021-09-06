@@ -1,0 +1,12 @@
+
+<ng-container *ngIf="currentState$ | async as currentState">
+  <button>
+    <ng-container *ngTemplateOutlet="stateTemplates[currentState] || defaultState">
+    </ng-container>
+    <ng-template #defaultState>
+      SAVE
+    </ng-template>
+  </button>
+</ng-container>
+
+
