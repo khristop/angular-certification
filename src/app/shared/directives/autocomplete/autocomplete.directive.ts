@@ -12,6 +12,14 @@ export class AutocompleteDirective implements OnInit, OnDestroy {
   killSubscriptions$ = new Subject();
   previousValue: string;
 
+  get controlValue () {
+    return this.ngControl.control.value;
+  }
+
+  set controlValue(newValue: string) {
+    this.ngControl.control.setValue(newValue);
+  }
+
   constructor(
     public host: ElementRef<HTMLInputElement>,
     private ngControl: NgControl
@@ -23,9 +31,9 @@ export class AutocompleteDirective implements OnInit, OnDestroy {
     fromEvent(this.host.nativeElement, 'focus')
       .pipe(
         tap(() => {
-          if(this.ngControl.control.value) {
-            this.previousValue = this.ngControl.control.value;
-            this.ngControl.control.setValue('');
+          if(this.controlValue) {
+            this.previousValue = this.controlValue;
+            this.controlValue = '';
           }
         }),
         takeUntil(this.killSubscriptions$))
@@ -36,7 +44,7 @@ export class AutocompleteDirective implements OnInit, OnDestroy {
           takeWhile(() => this.appAutocomplete.showDropdown$.getValue())
         )
         .subscribe(( value: string ) => {
-          this.ngControl.control.setValue(value);
+          this.controlValue = value;
           this.appAutocomplete.closeDropdown();
         });
       });
@@ -50,8 +58,8 @@ export class AutocompleteDirective implements OnInit, OnDestroy {
           return event.target !== this.host.nativeElement && !optionClicked;
         }))
       .subscribe(() => {
-        if(!this.ngControl.value && this.previousValue) {
-          this.ngControl.control.setValue(this.previousValue);
+        if(!this.controlValue && this.previousValue) {
+          this.controlValue = this.previousValue;
         }
         this.appAutocomplete.closeDropdown();
       });
