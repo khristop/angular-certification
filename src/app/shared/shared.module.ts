@@ -4,9 +4,11 @@ import { MeasureUnitPipe } from "./pipes/measure-unit.pipe";
 import { GetDatePipe } from "./pipes/get-date.pipe";
 import { StativeButtonComponent } from './components/stative-button/stative-button.component';
 import { ButtonStateDirective } from "./directives/button-state/button-state.directive";
+import { AutocompleteComponent } from './components/autocomplete/autocomplete.component';
+import { AutocompleteOptionComponent } from './components/autocomplete-option/autocomplete-option.component';
 
 const pipes = [MeasureUnitPipe, GetDatePipe];
-const components = [StativeButtonComponent];
+const components = [StativeButtonComponent, AutocompleteComponent, AutocompleteOptionComponent];
 const directives = [ButtonStateDirective];
 
 @NgModule({

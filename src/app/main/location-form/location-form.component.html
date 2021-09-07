@@ -1,24 +1,32 @@
 <div class="well">
   <h2>Enter a zipcode:</h2>
-  <input class="form-control" placeholder="Zipcode" type="text" id="addLocation" ngModel #locationControl="ngModel">
-  <br>
+  <div class="search-wrapper">
+    <input
+      class="form-control"
+      placeholder="Zipcode"
+      type="text"
+      id="addLocation"
+      ngModel
+      #locationControl="ngModel"
+    />
+    <app-autocomplete #autocomplete="autocomplete">
+      <app-autocomplete-option>Option 1</app-autocomplete-option>
+    </app-autocomplete>
+  </div>
+  <br />
   <app-stative-button (buttonClicked)="addLocation(locationControl.value)">
     <ng-template [appButtonState]="'initial'">
-      <div class="button button--initial">
-        Add location
-      </div>
+      <div class="button button--initial">Add location</div>
     </ng-template>
     <ng-template [appButtonState]="'working'">
       <div class="button button--working">
-        <img src="assets/spinner.svg" alt="loading">
+        <img src="assets/spinner.svg" alt="loading" />
       </div>
     </ng-template>
     <ng-template [appButtonState]="'complete'">
       <div class="button button--complete">
-        <img src="assets/check.png" alt="check">        
-        <span>
-          IT'S COMPLETED
-        </span>
+        <img src="assets/check.png" alt="check" />
+        <span> IT'S COMPLETED </span>
       </div>
     </ng-template>
   </app-stative-button>
