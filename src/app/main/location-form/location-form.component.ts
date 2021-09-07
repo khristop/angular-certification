@@ -1,43 +1,41 @@
 import { Component, EventEmitter, OnInit, Output, ViewChild } from "@angular/core";
-import { filter, take } from "rxjs/operators";
+import { FormControl } from "@angular/forms";
+import { Observable, of } from "rxjs";
+import { debounceTime, distinctUntilChanged, filter, startWith, switchMap, take } from "rxjs/operators";
+import { PlacesService } from "src/app/core/services/places.service";
 import { StativeButtonComponent } from "src/app/shared/components/stative-button/stative-button.component";
 import { WeatherService } from "../weather.service";
+
+export interface Location {
+  name: string;
+  zipcode: string;
+}
 
 @Component({
   selector: "app-location-form",
   templateUrl: "./location-form.component.html",
   styleUrls: ["./location-form.component.scss"]
 })
-export class LocationFormComponent {
+export class LocationFormComponent implements OnInit {
   @Output() zipcodeSelected = new EventEmitter<string>();
   @ViewChild(StativeButtonComponent, { static: false}) buttonRef: StativeButtonComponent;
 
-  locations = [
-    {
-      zipcode: '312',
-      name: 'City 1'
-    },
-    {
-      zipcode: '313',
-      name: 'City ABC'
-    },
-    {
-      zipcode: '315',
-      name: 'City rew'
-    },
-    {
-      zipcode: '314',
-      name: 'City CDF'
-    },
-    {
-      zipcode: '316',
-      name: 'City ytt'
-    },
-  ];
+  zipcode = new FormControl('');
+  placesHints$: Observable<Location[]>;
 
-  constructor(private weatherService: WeatherService) {}
+  constructor(private weatherService: WeatherService, private placesService: PlacesService) {}
 
-  addLocation(zipcode: string) {
+  ngOnInit() {
+    this.placesHints$ = this.zipcode.valueChanges
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        switchMap((hint: string) =>  this.placesService.getPlaces(hint))
+      );
+  }
+
+  addLocation() {
+    const zipcode = this.zipcode.value;
     this.zipcodeSelected.emit(zipcode);
     this.weatherService.addLocationStatus$
       .pipe(

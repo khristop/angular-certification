@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from "@angular/core";
 import { BehaviorSubject, of, interval, Subscription, forkJoin, concat } from "rxjs";
-import { startWith } from "rxjs/operators";
+import { catchError, startWith } from "rxjs/operators";
 import { WeatherResponse } from "../core/models/weather-api.model";
 import { Weather } from "../core/models/weather.model";
 import { StorageService } from "../core/services/storage.service";
@@ -82,6 +82,12 @@ export class WeatherService implements OnDestroy {
     }
     this.weatherAPIService
       .getWeatherByZipcode(newLocationZipcode)
+      .pipe(
+        catchError(err => {
+          this.addLocationStatus$.next(false);
+          return err;
+        })
+      )
       .subscribe((weatherData: WeatherResponse) => {
         weatherData["zipcode"] = newLocationZipcode;
         this.locationWeathersSubject$.next([

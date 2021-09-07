@@ -1,23 +1,31 @@
 <div class="well">
-  <h2>Enter a zipcode:</h2>
+  <h2>Enter a zipcode or city:</h2>
   <div class="dropdown__wrapper">
     <input
       class="form-control"
       placeholder="Zipcode"
       type="text"
       id="addLocation"
-      ngModel
-      #locationControl="ngModel"
+      [formControl]="zipcode"
       [appAutocomplete]="autocomplete"
     />
     <app-autocomplete #autocomplete="autocomplete">
       <ng-template appAutocompleteContent>
-        <app-autocomplete-option *ngFor="let location of locations" [value]="location.zipcode">{{ location.name }}</app-autocomplete-option>
+        <ng-container *ngIf="placesHints$ && (placesHints$ | async) as result">
+          <app-autocomplete-option
+            *ngFor="let location of result"
+            [value]="location.zipcode">
+            {{ location.name }}
+          </app-autocomplete-option>
+          <app-autocomplete-option class="no-result" *ngIf="!result.length">
+            No Places found.
+          </app-autocomplete-option>
+        </ng-container>
       </ng-template>
     </app-autocomplete>
   </div>
   <br />
-  <app-stative-button (buttonClicked)="addLocation(locationControl.value)">
+  <app-stative-button (buttonClicked)="addLocation()">
     <ng-template [appButtonState]="'initial'">
       <div class="button button--initial">Add location</div>
     </ng-template>
