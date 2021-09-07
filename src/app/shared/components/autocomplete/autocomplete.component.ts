@@ -1,4 +1,4 @@
-import { Component, ContentChildren, QueryList } from '@angular/core';
+import { Component, ContentChildren, ElementRef, QueryList } from '@angular/core';
 import { AutocompleteOptionComponent } from '../autocomplete-option/autocomplete-option.component';
 
 @Component({
@@ -9,4 +9,16 @@ import { AutocompleteOptionComponent } from '../autocomplete-option/autocomplete
 })
 export class AutocompleteComponent {
   @ContentChildren(AutocompleteOptionComponent) optionsRef: QueryList<AutocompleteOptionComponent>;
+
+  showDropdown = false;
+
+  constructor(public host: ElementRef) {}
+
+  openDropdown() {
+    this.showDropdown = true;
+  }
+
+  closeDropdown() {
+    this.showDropdown = false;
+  }
 }

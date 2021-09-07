@@ -22,8 +22,16 @@ export class LocationFormComponent {
       name: 'City ABC'
     },
     {
+      zipcode: '315',
+      name: 'City rew'
+    },
+    {
       zipcode: '314',
       name: 'City CDF'
+    },
+    {
+      zipcode: '316',
+      name: 'City ytt'
     },
   ];
 

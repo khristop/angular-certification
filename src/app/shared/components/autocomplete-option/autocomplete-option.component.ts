@@ -1,16 +1,12 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-autocomplete-option',
   templateUrl: './autocomplete-option.component.html',
   styleUrls: ['./autocomplete-option.component.scss']
 })
-export class AutocompleteOptionComponent implements OnInit {
+export class AutocompleteOptionComponent {
   @Input() value: string;
-
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
+  click$ = new Subject();
 }

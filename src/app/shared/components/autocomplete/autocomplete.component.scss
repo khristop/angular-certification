@@ -1,0 +1,12 @@
+:host {
+  position: absolute;
+  width: 100%;
+  z-index: 1;
+}
+
+.autocomplete {
+  background-color: white;
+  box-shadow: 4px 4px 12px grey;
+  max-height: 150px;
+  overflow: auto;
+}
