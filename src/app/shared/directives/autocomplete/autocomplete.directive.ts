@@ -1,7 +1,7 @@
-import { Directive, ElementRef, Input, OnDestroy, OnInit } from '@angular/core';
+import { Directive, ElementRef, HostBinding, Input, OnDestroy, OnInit } from '@angular/core';
 import { NgControl } from '@angular/forms';
 import { fromEvent, Subject } from 'rxjs';
-import { filter, take, takeUntil } from 'rxjs/operators';
+import { filter, map, take, takeUntil, takeWhile, tap } from 'rxjs/operators';
 import { AutocompleteComponent } from '../../components/autocomplete/autocomplete.component';
 
 @Directive({
@@ -10,29 +10,51 @@ import { AutocompleteComponent } from '../../components/autocomplete/autocomplet
 export class AutocompleteDirective implements OnInit, OnDestroy {
   @Input() appAutocomplete: AutocompleteComponent;
   killSubscriptions$ = new Subject();
+  previousValue: string;
 
   constructor(
     public host: ElementRef<HTMLInputElement>,
     private ngControl: NgControl
-  ) { }
+  ) {
+    (host.nativeElement as HTMLElement).setAttribute('autocomplete', 'off');
+  }
 
   ngOnInit() {
     fromEvent(this.host.nativeElement, 'focus')
-      .pipe(takeUntil(this.killSubscriptions$))
+      .pipe(
+        tap(() => {
+          if(this.ngControl.control.value) {
+            this.previousValue = this.ngControl.control.value;
+            this.ngControl.control.setValue('');
+          }
+        }),
+        takeUntil(this.killSubscriptions$))
       .subscribe(() => {
         this.appAutocomplete.openDropdown();
         this.appAutocomplete.optionsClick()
-        .pipe(take(1))
+        .pipe(
+          takeWhile(() => this.appAutocomplete.showDropdown$.getValue())
+        )
         .subscribe(( value: string ) => {
           this.ngControl.control.setValue(value);
+          this.appAutocomplete.closeDropdown();
         });
       });
 
     fromEvent<MouseEvent>(document, 'click')
       .pipe(
         takeUntil(this.killSubscriptions$),
-        filter(event => event.target !== this.host.nativeElement))
-      .subscribe(() => this.appAutocomplete.closeDropdown());
+        filter(event => {
+          const optionClicked = (this.appAutocomplete.host.nativeElement as HTMLElement)
+            .contains(event.target as HTMLElement);
+          return event.target !== this.host.nativeElement && !optionClicked;
+        }))
+      .subscribe(() => {
+        if(!this.ngControl.value && this.previousValue) {
+          this.ngControl.control.setValue(this.previousValue);
+        }
+        this.appAutocomplete.closeDropdown();
+      });
   }
 
   ngOnDestroy(): void {
