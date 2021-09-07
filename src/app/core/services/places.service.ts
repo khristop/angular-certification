@@ -12,24 +12,16 @@ export class PlacesService {
 
   locations = [
     {
-      zipcode: '312',
-      name: 'City 1'
+      zipcode: '95742',
+      name: 'USA'
     },
     {
-      zipcode: '313',
-      name: 'City ABC'
+      zipcode: '25000',
+      name: 'France'
     },
     {
-      zipcode: '315',
-      name: 'City rew'
-    },
-    {
-      zipcode: '314',
-      name: 'City CDF'
-    },
-    {
-      zipcode: '316',
-      name: 'City ytt'
+      zipcode: '2024',
+      name: 'Australia'
     },
   ];
 

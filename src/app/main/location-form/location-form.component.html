@@ -15,7 +15,7 @@
           <app-autocomplete-option
             *ngFor="let location of result"
             [value]="location.zipcode">
-            {{ location.name }}
+            <span [innerHTML]="location.name | emphasize : zipcode.value"></span>
           </app-autocomplete-option>
           <app-autocomplete-option class="no-result" *ngIf="!result.length">
             No Places found.

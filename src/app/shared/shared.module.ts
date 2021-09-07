@@ -8,8 +8,9 @@ import { AutocompleteComponent } from './components/autocomplete/autocomplete.co
 import { AutocompleteOptionComponent } from './components/autocomplete-option/autocomplete-option.component';
 import { AutocompleteDirective } from "./directives/autocomplete/autocomplete.directive";
 import { AutocompleteContentDirective } from "./directives/autocomplete/autocomplete-content.directive";
+import { EmphasizePipe } from "./pipes/emphasize.pipe";
 
-const pipes = [MeasureUnitPipe, GetDatePipe];
+const pipes = [MeasureUnitPipe, GetDatePipe, EmphasizePipe];
 const components = [StativeButtonComponent, AutocompleteComponent, AutocompleteOptionComponent];
 const directives = [ButtonStateDirective, AutocompleteDirective, AutocompleteContentDirective];
 
