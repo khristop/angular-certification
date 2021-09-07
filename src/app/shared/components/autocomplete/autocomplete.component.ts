@@ -1,4 +1,7 @@
-import { Component, ContentChildren, ElementRef, QueryList } from '@angular/core';
+import { Component, ContentChild, ContentChildren, ElementRef, QueryList } from '@angular/core';
+import { BehaviorSubject, merge } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
+import { AutocompleteContentDirective } from '../../directives/autocomplete/autocomplete-content.directive';
 import { AutocompleteOptionComponent } from '../autocomplete-option/autocomplete-option.component';
 
 @Component({
@@ -9,16 +12,25 @@ import { AutocompleteOptionComponent } from '../autocomplete-option/autocomplete
 })
 export class AutocompleteComponent {
   @ContentChildren(AutocompleteOptionComponent) optionsRef: QueryList<AutocompleteOptionComponent>;
+  @ContentChild(AutocompleteContentDirective) autocompleteContent: AutocompleteContentDirective;
 
-  showDropdown = false;
+  showDropdown$ = new BehaviorSubject(false);
 
   constructor(public host: ElementRef) {}
 
   openDropdown() {
-    this.showDropdown = true;
+    this.showDropdown$.next(true);
+  }
+  closeDropdown() {
+    this.showDropdown$.next(false);
   }
 
-  closeDropdown() {
-    this.showDropdown = false;
+  optionsClick() {
+    return this.optionsRef.changes.pipe(
+      switchMap(options => {
+        const clicks$ = options.map(option => option.click$);
+        return merge(...clicks$);
+      })
+    );
   }
 }

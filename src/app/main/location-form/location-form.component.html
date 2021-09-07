@@ -11,7 +11,9 @@
       [appAutocomplete]="autocomplete"
     />
     <app-autocomplete #autocomplete="autocomplete">
-      <app-autocomplete-option *ngFor="let location of locations" [value]="location.zipcode">{{ location.name }}</app-autocomplete-option>
+      <ng-template appAutocompleteContent>
+        <app-autocomplete-option *ngFor="let location of locations" [value]="location.zipcode">{{ location.name }}</app-autocomplete-option>
+      </ng-template>
     </app-autocomplete>
   </div>
   <br />
