@@ -8,9 +8,10 @@
       id="addLocation"
       ngModel
       #locationControl="ngModel"
+      [appAutocomplete]="autocomplete"
     />
     <app-autocomplete #autocomplete="autocomplete">
-      <app-autocomplete-option>Option 1</app-autocomplete-option>
+      <app-autocomplete-option *ngFor="let location of locations" [value]="location.zipcode">{{ location.name }}</app-autocomplete-option>
     </app-autocomplete>
   </div>
   <br />

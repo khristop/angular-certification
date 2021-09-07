@@ -6,10 +6,11 @@ import { StativeButtonComponent } from './components/stative-button/stative-butt
 import { ButtonStateDirective } from "./directives/button-state/button-state.directive";
 import { AutocompleteComponent } from './components/autocomplete/autocomplete.component';
 import { AutocompleteOptionComponent } from './components/autocomplete-option/autocomplete-option.component';
+import { AutocompleteDirective } from "./directives/autocomplete/autocomplete.directive";
 
 const pipes = [MeasureUnitPipe, GetDatePipe];
 const components = [StativeButtonComponent, AutocompleteComponent, AutocompleteOptionComponent];
-const directives = [ButtonStateDirective];
+const directives = [ButtonStateDirective, AutocompleteDirective];
 
 @NgModule({
   imports: [CommonModule],

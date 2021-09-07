@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-autocomplete-option',
@@ -6,6 +6,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./autocomplete-option.component.scss']
 })
 export class AutocompleteOptionComponent implements OnInit {
+  @Input() value: string;
 
   constructor() { }
 

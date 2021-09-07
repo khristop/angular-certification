@@ -12,6 +12,21 @@ export class LocationFormComponent {
   @Output() zipcodeSelected = new EventEmitter<string>();
   @ViewChild(StativeButtonComponent, { static: false}) buttonRef: StativeButtonComponent;
 
+  locations = [
+    {
+      zipcode: '312',
+      name: 'City 1'
+    },
+    {
+      zipcode: '313',
+      name: 'City ABC'
+    },
+    {
+      zipcode: '314',
+      name: 'City CDF'
+    },
+  ];
+
   constructor(private weatherService: WeatherService) {}
 
   addLocation(zipcode: string) {
