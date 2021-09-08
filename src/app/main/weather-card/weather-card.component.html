@@ -9,7 +9,7 @@
       - Min {{ weatherInfo.main.temp_min | measureUnit : measureUnit }}
     </p>
     <p>
-      <a [routerLink]="['/forecast', weatherInfo.zipcode]">Show 5-day forecast for Rancho Cordova</a>
+      <a [routerLink]="['/forecast', weatherInfo.countryCode, weatherInfo.zipcode]">Show 5-day forecast for Rancho Cordova</a>
     </p>
   </div>
   <div>

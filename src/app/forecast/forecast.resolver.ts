@@ -13,8 +13,8 @@ export class ForecastResolver implements Resolve<ForecastResponse> {
   ) {}
 
   resolve(route: ActivatedRouteSnapshot): Observable<ForecastResponse> {
-    const zipcode = route.paramMap.get("zipcode");
-    return this.weatherAPIService.getForecastByLocation(zipcode).pipe(
+    const {zipcode, countryCode} = route.params;
+    return this.weatherAPIService.getForecastByLocation(zipcode, countryCode || "US").pipe(
       catchError(() => {
         this.router.navigate(["/not-found"]);
         return EMPTY;

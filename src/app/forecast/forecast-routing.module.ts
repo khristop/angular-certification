@@ -15,6 +15,13 @@ const routes: Routes = [
     resolve: {
       forecastData: ForecastResolver
     }
+  },
+  {
+    path: ":countryCode/:zipcode",
+    component: ForecastComponent,
+    resolve: {
+      forecastData: ForecastResolver
+    }
   }
 ];
 

@@ -21,8 +21,8 @@ export class WeatherAPIService {
     });
   }
 
-  getForecastByLocation(zipcode: string): Observable<ForecastResponse> {
-    const params = new HttpParams().set("zip", zipcode).set("cnt", "5");
+  getForecastByLocation(zipcode: string, country?: string): Observable<ForecastResponse> {
+    const params = new HttpParams().set("zip", `${zipcode.replace(/\s+/g, '')},${country.toLowerCase()}`).set("cnt", "5");
     return this.httpClient.get<ForecastResponse>(this.forecastAPI, {
       params
     });
