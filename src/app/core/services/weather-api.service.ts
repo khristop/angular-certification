@@ -14,14 +14,14 @@ export class WeatherAPIService {
 
   constructor(private httpClient: HttpClient) {}
 
-  getWeatherByZipcode(zipcode: string): Observable<WeatherResponse> {
-    const params = new HttpParams().set("zip", zipcode);
+  getWeatherByLocation(zipcode: string, country?: string): Observable<WeatherResponse> {
+    const params = new HttpParams().set("zip", `${zipcode.replace(/\s+/g, '')},${country.toLowerCase()}`);
     return this.httpClient.get<WeatherResponse>(this.weatherAPI, {
       params
     });
   }
 
-  getForecastByZipcode(zipcode: string): Observable<ForecastResponse> {
+  getForecastByLocation(zipcode: string): Observable<ForecastResponse> {
     const params = new HttpParams().set("zip", zipcode).set("cnt", "5");
     return this.httpClient.get<ForecastResponse>(this.forecastAPI, {
       params

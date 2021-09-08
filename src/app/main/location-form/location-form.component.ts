@@ -1,5 +1,5 @@
-import { Component, EventEmitter, OnInit, Output, ViewChild } from "@angular/core";
-import { FormBuilder, FormControl } from "@angular/forms";
+import { Component, OnInit, ViewChild } from "@angular/core";
+import { FormBuilder} from "@angular/forms";
 import { Observable } from "rxjs";
 import { debounceTime, distinctUntilChanged, filter, switchMap, take } from "rxjs/operators";
 import { Country } from "src/app/core/models/country.model";
@@ -7,11 +7,6 @@ import { PlacesService } from "src/app/core/services/places.service";
 import { StativeButtonComponent } from "src/app/shared/components/stative-button/stative-button.component";
 import { AutocompleteOptionData } from "src/app/shared/directives/autocomplete/autocomplete.directive";
 import { WeatherService } from "../weather.service";
-
-export interface LocationFormData {
-  zipcode: string;
-  country?: string;
-}
 
 @Component({
   selector: "app-location-form",
@@ -46,7 +41,7 @@ export class LocationFormComponent implements OnInit {
     const {zipcode, countryAutocomplete} = this.locationForm.value;
     this.weatherService.addLocation({
       zipcode,
-      ...(countryAutocomplete?.selectedValue && {country: countryAutocomplete.selectedValue})
+      ...(countryAutocomplete?.selectedValue && {countryCode: countryAutocomplete.selectedValue})
     });
     this.weatherService.addLocationStatus$
       .pipe(

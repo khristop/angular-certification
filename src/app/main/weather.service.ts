@@ -5,11 +5,14 @@ import { WeatherResponse } from "../core/models/weather-api.model";
 import { Weather } from "../core/models/weather.model";
 import { StorageService } from "../core/services/storage.service";
 import { WeatherAPIService } from "../core/services/weather-api.service";
-
+export interface Location {
+  zipcode: string;
+  countryCode?: string;
+}
 @Injectable()
 export class WeatherService implements OnDestroy {
   private locationsKey = "locations";
-  private zipcodes = this.getLocations();
+  private locations: Location[] = this.getLocations();
   private refreshInterval = 30000;
   private refreshSubscription: Subscription;
 
@@ -36,24 +39,27 @@ export class WeatherService implements OnDestroy {
     this.refreshSubscription = interval(this.refreshInterval)
       .pipe(startWith(0))
       .subscribe( () => {
-        if (this.zipcodes?.length > 0) {
-          const observers = this.zipcodes.map(zipcode =>
+        if (this.locations?.length > 0) {
+          const observers = this.locations.map((location) =>
             forkJoin([
-              of(zipcode),
-              this.weatherAPIService.getWeatherByZipcode(zipcode)
+              of(location),
+              this.weatherAPIService.getWeatherByLocation(location.zipcode, location.countryCode)
             ])
           );
     
-          concat(...observers).subscribe(([zipcode, weatherResponse]) => {
+          concat(...observers).subscribe(([location, weatherResponse]) => {
             const newWeatherData = {
               ...weatherResponse,
-              zipcode
+              ...location
             };
             const oldWeatherData = [...this.locationWeathersSubject$.value];
             let updateWeather = [];
 
-            if (oldWeatherData.length > 0 && oldWeatherData.find(weather => weather.zipcode === zipcode)) {
-              updateWeather = oldWeatherData.map(weather => weather.zipcode === zipcode ? newWeatherData : weather);
+            if (oldWeatherData.length > 0 && oldWeatherData.find(weather =>
+                weather.zipcode === location.zipcode && weather.countryCode === location.countryCode)) {
+              updateWeather = oldWeatherData.map(weather =>
+                weather.zipcode === location.zipcode && weather.countryCode === location.countryCode ?
+                newWeatherData : weather);
             } else {
               updateWeather = [...oldWeatherData, newWeatherData];
             }
@@ -63,25 +69,30 @@ export class WeatherService implements OnDestroy {
       });
   }
 
-  private saveLocations(locations: string[]): void {
-    this.zipcodes = locations;
+  private saveLocations(locations: Location[]): void {
+    this.locations = locations;
     this.storage.save(this.locationsKey, JSON.stringify(locations));
   }
 
-  getLocations(): string[] {
+  getLocations(): Location[] {
     const locationsSaved = this.storage.get(this.locationsKey);
     return locationsSaved ? JSON.parse(locationsSaved) : [];
   }
 
   
-  addLocation({zipcode, country}): void {
+  addLocation(location: Location): void {
+    location.countryCode = location.countryCode || 'US';
+    let {zipcode, countryCode} = location;
     this.addLocationStatus$.next(true);
-    if (!zipcode || this.zipcodes.includes(zipcode)) {
+    if (!zipcode ||this.locations.some(item =>
+      item.zipcode === zipcode &&
+      ((!item.countryCode && !countryCode) || item.countryCode === countryCode))
+    ) {
       this.addLocationStatus$.next(false);
       return; // return some error or display zipcode already selected
     }
     this.weatherAPIService
-      .getWeatherByZipcode(zipcode)
+      .getWeatherByLocation(zipcode, countryCode)
       .pipe(
         catchError(err => {
           this.addLocationStatus$.next(false);
@@ -90,11 +101,12 @@ export class WeatherService implements OnDestroy {
       )
       .subscribe((weatherData: WeatherResponse) => {
         weatherData["zipcode"] = zipcode;
+        weatherData["countryCode"] = countryCode;
         this.locationWeathersSubject$.next([
           ...this.locationWeathers,
           weatherData as Weather
         ]);
-        this.saveLocations([...this.zipcodes, zipcode]);
+        this.saveLocations([...this.locations, location]);
         this.addLocationStatus$.next(false);
       });
   }
@@ -104,6 +116,6 @@ export class WeatherService implements OnDestroy {
       location => location.zipcode !== zipcode
     );
     this.locationWeathersSubject$.next(locationsUpdated);
-    this.saveLocations(locationsUpdated.map(location => location.zipcode));
+    this.saveLocations(locationsUpdated.map(({zipcode, countryCode}) => ({zipcode, countryCode})));
   }
 }
