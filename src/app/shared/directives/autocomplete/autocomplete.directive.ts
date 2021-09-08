@@ -1,41 +1,47 @@
-import { Directive, ElementRef, HostBinding, Input, OnDestroy, OnInit } from '@angular/core';
-import { NgControl } from '@angular/forms';
+import { Directive, ElementRef, HostListener, Input, OnDestroy, OnInit, Renderer2 } from '@angular/core';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { fromEvent, Subject } from 'rxjs';
-import { filter, map, take, takeUntil, takeWhile, tap } from 'rxjs/operators';
+import { filter, takeUntil, takeWhile } from 'rxjs/operators';
 import { AutocompleteComponent } from '../../components/autocomplete/autocomplete.component';
 
+export interface AutocompleteOptionData {
+  search: string;
+  selectedValue: string; 
+}
+
 @Directive({
-  selector: '[appAutocomplete]'
+  selector: '[appAutocomplete]',
+  providers: [{
+    provide: NG_VALUE_ACCESSOR,
+    useExisting: AutocompleteDirective,
+    multi: true
+  }]
 })
-export class AutocompleteDirective implements OnInit, OnDestroy {
+export class AutocompleteDirective implements OnInit, OnDestroy, ControlValueAccessor {
   @Input() appAutocomplete: AutocompleteComponent;
+  @Input() displayWith : (_: unknown) => string;
+  @Input() setValueBy : (_: unknown) => string;
+
+  @HostListener('input', ['$event.target.value'])
+  onInput(input: string) {
+    this.onChange({search: input});
+  };
+
+  // control value accessor: Reference functions to update the model value
+  private onChange = (_: unknown) => {};
+  private onTouch = (_: unknown) => {};
+
+  private _value: AutocompleteOptionData;
+
   killSubscriptions$ = new Subject();
-  previousValue: string;
 
-  get controlValue () {
-    return this.ngControl.control.value;
-  }
-
-  set controlValue(newValue: string) {
-    this.ngControl.control.setValue(newValue);
-  }
-
-  constructor(
-    public host: ElementRef<HTMLInputElement>,
-    private ngControl: NgControl
-  ) {
+  constructor(public host: ElementRef<HTMLInputElement>, private renderer: Renderer2) {
     (host.nativeElement as HTMLElement).setAttribute('autocomplete', 'off');
   }
 
   ngOnInit() {
     fromEvent(this.host.nativeElement, 'focus')
       .pipe(
-        tap(() => {
-          if(this.controlValue) {
-            this.previousValue = this.controlValue;
-            this.controlValue = '';
-          }
-        }),
         takeUntil(this.killSubscriptions$))
       .subscribe(() => {
         this.appAutocomplete.openDropdown();
@@ -43,8 +49,14 @@ export class AutocompleteDirective implements OnInit, OnDestroy {
         .pipe(
           takeWhile(() => this.appAutocomplete.showDropdown$.getValue())
         )
-        .subscribe(( value: string ) => {
-          this.controlValue = value;
+        .subscribe(( value: unknown ) => {
+          const uiValue = this.displayWith ? this.displayWith(value) : value as string;
+          const modelValue = this.setValueBy ? this.setValueBy(value) : value as string;
+
+          this._value = { search: uiValue, selectedValue: modelValue};
+
+          this.writeValue(this._value.search);
+          this.onChange(this._value);
           this.appAutocomplete.closeDropdown();
         });
       });
@@ -58,9 +70,6 @@ export class AutocompleteDirective implements OnInit, OnDestroy {
           return event.target !== this.host.nativeElement && !optionClicked;
         }))
       .subscribe(() => {
-        if(!this.controlValue && this.previousValue) {
-          this.controlValue = this.previousValue;
-        }
         this.appAutocomplete.closeDropdown();
       });
   }
@@ -68,5 +77,20 @@ export class AutocompleteDirective implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.killSubscriptions$.next();
     this.killSubscriptions$.complete();
+  }
+
+  writeValue(newValue: string): void {
+    this.renderer.setProperty(
+      this.host.nativeElement,
+      'value',
+      newValue
+    );
+  }
+  registerOnChange(fn: (_: unknown) => void): void {
+    this.onChange = fn;
+  }
+
+  registerOnTouched(fn: (_: unknown) => void): void {
+    this.onTouch = fn;
   }
 }

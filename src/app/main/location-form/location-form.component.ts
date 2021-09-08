@@ -1,14 +1,16 @@
 import { Component, EventEmitter, OnInit, Output, ViewChild } from "@angular/core";
-import { FormControl } from "@angular/forms";
-import { Observable, of } from "rxjs";
-import { debounceTime, distinctUntilChanged, filter, startWith, switchMap, take } from "rxjs/operators";
+import { FormBuilder, FormControl } from "@angular/forms";
+import { Observable } from "rxjs";
+import { debounceTime, distinctUntilChanged, filter, switchMap, take } from "rxjs/operators";
+import { Country } from "src/app/core/models/country.model";
 import { PlacesService } from "src/app/core/services/places.service";
 import { StativeButtonComponent } from "src/app/shared/components/stative-button/stative-button.component";
+import { AutocompleteOptionData } from "src/app/shared/directives/autocomplete/autocomplete.directive";
 import { WeatherService } from "../weather.service";
 
-export interface Location {
-  name: string;
+export interface LocationFormData {
   zipcode: string;
+  country?: string;
 }
 
 @Component({
@@ -17,26 +19,37 @@ export interface Location {
   styleUrls: ["./location-form.component.scss"]
 })
 export class LocationFormComponent implements OnInit {
-  @Output() zipcodeSelected = new EventEmitter<string>();
+  @Output() zipcodeSelected = new EventEmitter<LocationFormData>();
   @ViewChild(StativeButtonComponent, { static: false}) buttonRef: StativeButtonComponent;
 
-  zipcode = new FormControl('');
-  placesHints$: Observable<Location[]>;
+  placesHints$: Observable<Country[]>;
 
-  constructor(private weatherService: WeatherService, private placesService: PlacesService) {}
+  locationForm = this.fb.group({
+    zipcode: [''],
+    countryAutocomplete: [null] 
+  });
+
+  displayWithFn = (locationSelected: Country) => locationSelected.name;
+  setValueByFn = (locationSelected: Country) => locationSelected.code;
+
+  constructor(private weatherService: WeatherService, private placesService: PlacesService, private fb: FormBuilder) {}
 
   ngOnInit() {
-    this.placesHints$ = this.zipcode.valueChanges
+    this.placesHints$ = this.locationForm.get('countryAutocomplete').valueChanges
       .pipe(
         debounceTime(300),
         distinctUntilChanged(),
-        switchMap((hint: string) =>  this.placesService.getPlaces(hint))
+        switchMap(({search}: AutocompleteOptionData) =>  this.placesService.getPlaces(search))
       );
   }
 
   addLocation() {
-    const zipcode = this.zipcode.value;
-    this.zipcodeSelected.emit(zipcode);
+    const {zipcode, countryAutocomplete} = this.locationForm.value;
+    this.zipcodeSelected.emit({
+      zipcode,
+      country: countryAutocomplete.selected,
+      ...countryAutocomplete?.selected && {country: countryAutocomplete.selected}
+    });
     this.weatherService.addLocationStatus$
       .pipe(
         filter(value => !value),

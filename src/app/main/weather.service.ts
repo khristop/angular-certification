@@ -74,14 +74,14 @@ export class WeatherService implements OnDestroy {
   }
 
   
-  addLocation(newLocationZipcode: string): void {
+  addLocation({zipcode, country}): void {
     this.addLocationStatus$.next(true);
-    if (!newLocationZipcode || this.zipcodes.includes(newLocationZipcode)) {
+    if (!zipcode || this.zipcodes.includes(zipcode)) {
       this.addLocationStatus$.next(false);
       return; // return some error or display zipcode already selected
     }
     this.weatherAPIService
-      .getWeatherByZipcode(newLocationZipcode)
+      .getWeatherByZipcode(zipcode)
       .pipe(
         catchError(err => {
           this.addLocationStatus$.next(false);
@@ -89,12 +89,12 @@ export class WeatherService implements OnDestroy {
         })
       )
       .subscribe((weatherData: WeatherResponse) => {
-        weatherData["zipcode"] = newLocationZipcode;
+        weatherData["zipcode"] = zipcode;
         this.locationWeathersSubject$.next([
           ...this.locationWeathers,
           weatherData as Weather
         ]);
-        this.saveLocations([...this.zipcodes, newLocationZipcode]);
+        this.saveLocations([...this.zipcodes, zipcode]);
         this.addLocationStatus$.next(false);
       });
   }

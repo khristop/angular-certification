@@ -12,22 +12,22 @@ export class PlacesService {
 
   locations = [
     {
-      zipcode: '95742',
+      code: '95742',
       name: 'USA'
     },
     {
-      zipcode: '25000',
+      code: '25000',
       name: 'France'
     },
     {
-      zipcode: '2024',
+      code: '2024',
       name: 'Australia'
     },
   ];
 
   constructor(private httpClient: HttpClient) {}
 
-  getPlaces(hint: string): Observable<any> {
+  getPlaces(hint: string): Observable<unknown> {
     return of(hint)
       .pipe(
         map(value => value ?

@@ -1,24 +1,35 @@
-<div class="well">
-  <h2>Enter a zipcode or city:</h2>
-  <div class="dropdown__wrapper">
+<form class="well" [formGroup]="locationForm">
+
+  <h2>Enter a zipcode:</h2>
+  <div class="input__wrapper">
     <input
       class="form-control"
       placeholder="Zipcode"
       type="text"
-      id="addLocation"
-      [formControl]="zipcode"
+      formControlName="zipcode"
+    />
+  </div>
+  <h2>Enter city:</h2>
+  <div class="dropdown__wrapper">
+    <input
+      class="form-control"
+      placeholder="Enter country name"
+      formControlName="countryAutocomplete"
+      type="text"
       [appAutocomplete]="autocomplete"
+      [displayWith]="displayWithFn"
+      [setValueBy]="setValueByFn"
     />
     <app-autocomplete #autocomplete="autocomplete">
       <ng-template appAutocompleteContent>
         <ng-container *ngIf="placesHints$ && (placesHints$ | async) as result">
           <app-autocomplete-option
             *ngFor="let location of result"
-            [value]="location.zipcode">
-            <span [innerHTML]="location.name | emphasize : zipcode.value"></span>
+            [value]="location">
+            <span [innerHTML]="location.name | emphasize : locationForm.get('countryAutocomplete').value?.search"></span>
           </app-autocomplete-option>
           <app-autocomplete-option class="no-result" *ngIf="!result.length">
-            No Places found.
+            No Countries found.
           </app-autocomplete-option>
         </ng-container>
       </ng-template>
@@ -41,4 +52,8 @@
       </div>
     </ng-template>
   </app-stative-button>
-</div>
+</form>
+
+<pre>
+  {{ locationForm.value | json }}
+</pre>

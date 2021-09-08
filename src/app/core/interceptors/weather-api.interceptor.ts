@@ -24,9 +24,9 @@ export class WeatherAPIInterceptor implements HttpInterceptor {
   ) {}
 
   intercept(
-    req: HttpRequest<any>,
+    req: HttpRequest<unknown>,
     next: HttpHandler
-  ): Observable<HttpEvent<any>> {
+  ): Observable<HttpEvent<unknown>> {
     if (req.url.includes(this.weatherAPIUrl)) {
       req = req.clone({
         setParams: {
