@@ -19,7 +19,6 @@ export interface LocationFormData {
   styleUrls: ["./location-form.component.scss"]
 })
 export class LocationFormComponent implements OnInit {
-  @Output() zipcodeSelected = new EventEmitter<LocationFormData>();
   @ViewChild(StativeButtonComponent, { static: false}) buttonRef: StativeButtonComponent;
 
   placesHints$: Observable<Country[]>;
@@ -45,10 +44,9 @@ export class LocationFormComponent implements OnInit {
 
   addLocation() {
     const {zipcode, countryAutocomplete} = this.locationForm.value;
-    this.zipcodeSelected.emit({
+    this.weatherService.addLocation({
       zipcode,
-      country: countryAutocomplete.selected,
-      ...countryAutocomplete?.selected && {country: countryAutocomplete.selected}
+      ...(countryAutocomplete?.selectedValue && {country: countryAutocomplete.selectedValue})
     });
     this.weatherService.addLocationStatus$
       .pipe(
