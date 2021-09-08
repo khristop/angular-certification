@@ -1,12 +1,12 @@
-import { HttpClient } from "@angular/common/http";
-import { Injectable } from "@angular/core";
-import { Observable, of } from "rxjs";
-import { map } from "rxjs/operators";
-import { environment } from "../../../environments/environment";
-import { Country, CountryResponse } from "../models/country.model";
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
+import { Country, CountryResponse } from '../models/country.model';
 
 @Injectable({
-  providedIn: "root"
+  providedIn: 'root'
 })
 export class PlacesService {
   private placesApi = environment.placesAPI + '/name/';

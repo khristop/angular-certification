@@ -1,4 +1,4 @@
-import { Coordinate, WeatherData } from "./common-api.model";
+import { Coordinate, WeatherData } from './common-api.model';
 
 export interface Stats {
   temp: number;

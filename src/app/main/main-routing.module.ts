@@ -1,11 +1,11 @@
-import { NgModule } from "@angular/core";
-import { RouterModule, Routes } from "@angular/router";
-import { WeatherContainerComponent } from "./weather-container/weather-container.component";
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { WeatherContainerComponent } from './weather-container/weather-container.component';
 
 const routes: Routes = [
   {
-    path: "",
-    pathMatch: "full",
+    path: '',
+    pathMatch: 'full',
     component: WeatherContainerComponent
   }
 ];

@@ -1,17 +1,17 @@
-import { Inject, Injectable } from "@angular/core";
+import { Inject, Injectable } from '@angular/core';
 import {
   HttpInterceptor,
   HttpEvent,
   HttpHandler,
   HttpRequest
-} from "@angular/common/http";
-import { Observable, of, throwError } from "rxjs";
-import { MEASUREMENT_UNIT } from "../tokens/measurement-unit.token";
-import { MeasurementUnit } from "../models/weather.model";
-import { environment } from "../../../environments/environment";
-import { catchError } from "rxjs/operators";
-import { ErrorMessageService } from "../services/error-message.service";
-import { ErrorMessage } from "../models/common-api.model";
+} from '@angular/common/http';
+import { Observable, of, throwError } from 'rxjs';
+import { MEASUREMENT_UNIT } from '../tokens/measurement-unit.token';
+import { MeasurementUnit } from '../models/weather.model';
+import { environment } from '../../../environments/environment';
+import { catchError } from 'rxjs/operators';
+import { ErrorMessageService } from '../services/error-message.service';
+import { ErrorMessage } from '../models/common-api.model';
 
 @Injectable()
 export class WeatherAPIInterceptor implements HttpInterceptor {
@@ -37,9 +37,9 @@ export class WeatherAPIInterceptor implements HttpInterceptor {
     }
     return next.handle(req).pipe(
       catchError(err => {
-         if (err.status === 404) {
-           this.errorMessageService.showError(err.error as ErrorMessage);
-         }
+        if (err.status === 404) {
+          this.errorMessageService.showError(err.error as ErrorMessage);
+        }
         return throwError(err);
       })
     );

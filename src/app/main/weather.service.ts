@@ -1,17 +1,17 @@
-import { Injectable, OnDestroy } from "@angular/core";
-import { BehaviorSubject, of, interval, Subscription, forkJoin, concat } from "rxjs";
-import { catchError, startWith } from "rxjs/operators";
-import { WeatherResponse } from "../core/models/weather-api.model";
-import { Weather } from "../core/models/weather.model";
-import { StorageService } from "../core/services/storage.service";
-import { WeatherAPIService } from "../core/services/weather-api.service";
+import { Injectable, OnDestroy } from '@angular/core';
+import { BehaviorSubject, of, interval, Subscription, forkJoin, concat } from 'rxjs';
+import { catchError, startWith } from 'rxjs/operators';
+import { WeatherResponse } from '../core/models/weather-api.model';
+import { Weather } from '../core/models/weather.model';
+import { StorageService } from '../core/services/storage.service';
+import { WeatherAPIService } from '../core/services/weather-api.service';
 export interface Location {
   zipcode: string;
   countryCode?: string;
 }
 @Injectable()
 export class WeatherService implements OnDestroy {
-  private locationsKey = "locations";
+  private locationsKey = 'locations';
   private locations: Location[] = this.getLocations();
   private refreshInterval = 30000;
   private refreshSubscription: Subscription;
@@ -46,7 +46,7 @@ export class WeatherService implements OnDestroy {
               this.weatherAPIService.getWeatherByLocation(location.zipcode, location.countryCode)
             ])
           );
-    
+
           concat(...observers).subscribe(([location, weatherResponse]) => {
             const newWeatherData = {
               ...weatherResponse,
@@ -79,7 +79,6 @@ export class WeatherService implements OnDestroy {
     return locationsSaved ? JSON.parse(locationsSaved) : [];
   }
 
-  
   addLocation(location: Location): void {
     location.countryCode = location.countryCode || 'US';
     let {zipcode, countryCode} = location;
@@ -100,8 +99,8 @@ export class WeatherService implements OnDestroy {
         })
       )
       .subscribe((weatherData: WeatherResponse) => {
-        weatherData["zipcode"] = zipcode;
-        weatherData["countryCode"] = countryCode;
+        weatherData['zipcode'] = zipcode;
+        weatherData['countryCode'] = countryCode;
         this.locationWeathersSubject$.next([
           ...this.locationWeathers,
           weatherData as Weather

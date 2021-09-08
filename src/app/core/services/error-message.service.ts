@@ -1,9 +1,9 @@
-import { Injectable } from "@angular/core";
-import { BehaviorSubject } from "rxjs";
-import { ErrorMessage } from "../models/common-api.model";
+import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import { ErrorMessage } from '../models/common-api.model';
 
 @Injectable({
-  providedIn: "root"
+  providedIn: 'root'
 })
 export class ErrorMessageService {
   private errorMessageSubject$ = new BehaviorSubject<string>(null);
