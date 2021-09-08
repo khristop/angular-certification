@@ -1,11 +1,12 @@
-import { AfterContentInit, Component, ContentChildren, EventEmitter, Input, OnDestroy, Output, QueryList, TemplateRef } from '@angular/core';
+import { AfterContentInit, Component, ContentChildren, EventEmitter,
+  Input, OnDestroy, Output, QueryList, TemplateRef } from '@angular/core';
 import { BehaviorSubject, Subscription, timer } from 'rxjs';
 import { ButtonStateDirective } from '../../directives/button-state/button-state.directive';
 import { ButtonStates } from './stative-button.model';
 
 export type ButtonStateContent<AvailableStates> = {
   [state in keyof AvailableStates]: TemplateRef<HTMLElement>
-}
+};
 
 @Component({
   selector: 'app-stative-button',
@@ -18,8 +19,8 @@ export class StativeButtonComponent implements AfterContentInit, OnDestroy {
 
   @Input() resetTime = 3000;
   @Input() timerEnable = true;
-  
-  timerSubscription : Subscription;
+
+  timerSubscription: Subscription;
 
   currentState$ = new BehaviorSubject<ButtonStates>('initial');
   stateTemplates = {} as ButtonStateContent<ButtonStates> ;
@@ -31,7 +32,7 @@ export class StativeButtonComponent implements AfterContentInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if(this.timerSubscription) {
+    if (this.timerSubscription) {
       this.timerSubscription.unsubscribe();
     }
   }

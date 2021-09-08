@@ -18,7 +18,7 @@ export class WeatherContainerComponent {
     @Inject(MEASUREMENT_UNIT) public measurmentUnit: MeasurementUnit
   ) {}
 
-  removeLocation({ zipcode }: Weather) {
-    this.weatherService.removeLocationByZipcode(zipcode);
+  removeLocation({ zipcode, countryCode }: Weather) {
+    this.weatherService.removeLocationByLocation(zipcode, countryCode);
   }
 }

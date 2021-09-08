@@ -81,9 +81,9 @@ export class WeatherService implements OnDestroy {
 
   addLocation(location: Location): void {
     location.countryCode = location.countryCode || 'US';
-    let {zipcode, countryCode} = location;
+    const {zipcode, countryCode} = location;
     this.addLocationStatus$.next(true);
-    if (!zipcode ||this.locations.some(item =>
+    if (!zipcode || this.locations.some(item =>
       item.zipcode === zipcode &&
       ((!item.countryCode && !countryCode) || item.countryCode === countryCode))
     ) {
@@ -99,20 +99,23 @@ export class WeatherService implements OnDestroy {
         })
       )
       .subscribe((weatherData: WeatherResponse) => {
-        weatherData['zipcode'] = zipcode;
-        weatherData['countryCode'] = countryCode;
+        const newWeather = {
+          ...weatherData,
+          zipcode,
+          countryCode
+        } as Weather;
         this.locationWeathersSubject$.next([
           ...this.locationWeathers,
-          weatherData as Weather
+          newWeather
         ]);
         this.saveLocations([...this.locations, location]);
         this.addLocationStatus$.next(false);
       });
   }
 
-  removeLocationByZipcode(zipcode: string) {
+  removeLocationByLocation(zipcodeSelected: string, countryCodeSelected: string) {
     const locationsUpdated = this.locationWeathers.filter(
-      location => location.zipcode !== zipcode
+      location => location.zipcode !== zipcodeSelected && location.countryCode !== countryCodeSelected
     );
     this.locationWeathersSubject$.next(locationsUpdated);
     this.saveLocations(locationsUpdated.map(({zipcode, countryCode}) => ({zipcode, countryCode})));

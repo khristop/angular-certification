@@ -6,7 +6,7 @@ import { AutocompleteComponent } from '../../components/autocomplete/autocomplet
 
 export interface AutocompleteOptionData {
   search: string;
-  selectedValue: string; 
+  selectedValue: string;
 }
 
 @Directive({
@@ -19,21 +19,20 @@ export interface AutocompleteOptionData {
 })
 export class AutocompleteDirective implements OnInit, OnDestroy, ControlValueAccessor {
   @Input() appAutocomplete: AutocompleteComponent;
-  @Input() displayWith : (_: unknown) => string;
-  @Input() setValueBy : (_: unknown) => string;
+  @Input() displayWith: (_: unknown) => string;
+  @Input() setValueBy: (_: unknown) => string;
 
-  @HostListener('input', ['$event.target.value'])
-  onInput(input: string) {
-    this.onChange({search: input});
-  };
+  private killSubscriptions$ = new Subject();
+  private currentValue: AutocompleteOptionData;
 
   // control value accessor: Reference functions to update the model value
   private onChange = (_: unknown) => {};
   private onTouch = (_: unknown) => {};
 
-  private _value: AutocompleteOptionData;
-
-  killSubscriptions$ = new Subject();
+  @HostListener('input', ['$event.target.value'])
+  onInput(input: string) {
+    this.onChange({search: input});
+  }
 
   constructor(public host: ElementRef<HTMLInputElement>, private renderer: Renderer2) {
     (host.nativeElement as HTMLElement).setAttribute('autocomplete', 'off');
@@ -53,10 +52,10 @@ export class AutocompleteDirective implements OnInit, OnDestroy, ControlValueAcc
           const uiValue = this.displayWith ? this.displayWith(value) : value as string;
           const modelValue = this.setValueBy ? this.setValueBy(value) : value as string;
 
-          this._value = { search: uiValue, selectedValue: modelValue};
+          this.currentValue = { search: uiValue, selectedValue: modelValue};
 
-          this.writeValue(this._value.search);
-          this.onChange(this._value);
+          this.writeValue(this.currentValue.search);
+          this.onChange(this.currentValue);
           this.appAutocomplete.closeDropdown();
         });
       });
