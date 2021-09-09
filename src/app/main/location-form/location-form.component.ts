@@ -32,7 +32,7 @@ export class LocationFormComponent implements OnInit {
     this.placesHints$ = this.locationForm.get('countryAutocomplete').valueChanges
       .pipe(
         debounceTime(300),
-        distinctUntilChanged(),
+        distinctUntilChanged((prev, next) => prev.search === next.search),
         switchMap(({search}: AutocompleteOptionData) =>  this.placesService.getPlaces(search))
       );
   }

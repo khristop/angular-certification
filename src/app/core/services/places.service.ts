@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { Country, CountryResponse } from '../models/country.model';
 
@@ -16,7 +16,10 @@ export class PlacesService {
   getPlaces(hint: string): Observable<Country[]> {
     return this.httpClient.get<CountryResponse[]>(this.placesApi + hint)
     .pipe(
-      map(response => response.map(country => ({name: country.name, code: country.alpha2Code})))
+      map(response => response.map(country => ({name: country.name, code: country.alpha2Code}))),
+      catchError( err => {
+        return [];
+      })
     );
   }
 }

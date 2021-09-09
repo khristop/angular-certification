@@ -115,7 +115,7 @@ export class WeatherService implements OnDestroy {
 
   removeLocationByLocation(zipcodeSelected: string, countryCodeSelected: string) {
     const locationsUpdated = this.locationWeathers.filter(
-      location => location.zipcode !== zipcodeSelected && location.countryCode !== countryCodeSelected
+      location => !(location.zipcode === zipcodeSelected && location.countryCode === countryCodeSelected)
     );
     this.locationWeathersSubject$.next(locationsUpdated);
     this.saveLocations(locationsUpdated.map(({zipcode, countryCode}) => ({zipcode, countryCode})));
