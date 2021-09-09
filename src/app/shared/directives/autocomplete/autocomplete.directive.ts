@@ -44,6 +44,7 @@ export class AutocompleteDirective implements OnInit, OnDestroy, ControlValueAcc
         takeUntil(this.killSubscriptions$))
       .subscribe(() => {
         this.appAutocomplete.openDropdown();
+        this.resetControl();
         this.appAutocomplete.optionsClick()
         .pipe(
           takeWhile(() => this.appAutocomplete.showDropdown$.getValue())
@@ -91,5 +92,10 @@ export class AutocompleteDirective implements OnInit, OnDestroy, ControlValueAcc
 
   registerOnTouched(fn: (_: unknown) => void): void {
     this.onTouch = fn;
+  }
+
+  resetControl() {
+    this.writeValue('');
+    this.onChange(null);
   }
 }
