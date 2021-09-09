@@ -15,7 +15,7 @@ export class EmphasizePipe implements PipeTransform {
   }
 
   replace(value: string, lookupValue: string) {
-    return value.replace(new RegExp(`(${lookupValue})`, 'gi'), '<b>$1</b>');
+    return value.replace(new RegExp(`(${lookupValue.trim()})`, 'gi'), '<b>$1</b>');
   }
 
   sanitize(value: string) {

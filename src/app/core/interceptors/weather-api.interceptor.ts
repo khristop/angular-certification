@@ -27,7 +27,8 @@ export class WeatherAPIInterceptor implements HttpInterceptor {
     req: HttpRequest<unknown>,
     next: HttpHandler
   ): Observable<HttpEvent<unknown>> {
-    if (req.url.includes(this.weatherAPIUrl)) {
+    const isWeatherApiRequest = req.url.includes(this.weatherAPIUrl);
+    if (isWeatherApiRequest) {
       req = req.clone({
         setParams: {
           appid: this.weatherAPIKey,
@@ -35,13 +36,13 @@ export class WeatherAPIInterceptor implements HttpInterceptor {
         }
       });
     }
-    return next.handle(req).pipe(
+    return isWeatherApiRequest ? next.handle(req).pipe(
       catchError(err => {
         if (err.status === 404) {
           this.errorMessageService.showError(err.error as ErrorMessage);
         }
         return throwError(err);
       })
-    );
+    ) : next.handle(req);
   }
 }

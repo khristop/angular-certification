@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder} from '@angular/forms';
 import { Observable } from 'rxjs';
-import { debounceTime, distinctUntilChanged, filter, switchMap, take } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, filter, startWith, switchMap, take } from 'rxjs/operators';
 import { Country } from 'src/app/core/models/country.model';
 import { PlacesService } from 'src/app/core/services/places.service';
 import { StativeButtonComponent } from 'src/app/shared/components/stative-button/stative-button.component';
@@ -33,7 +33,8 @@ export class LocationFormComponent implements OnInit {
       .pipe(
         debounceTime(300),
         distinctUntilChanged((prev, next) => prev.search === next.search),
-        switchMap(({search}: AutocompleteOptionData) =>  this.placesService.getPlaces(search))
+        switchMap(({search}: AutocompleteOptionData) =>  this.placesService.getPlaces(search)),
+        startWith([])
       );
   }
 
